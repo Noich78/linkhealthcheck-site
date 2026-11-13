@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Link Healthcheck for Jira</title>
+<meta name="description" content="Jira project health check and dependency checker. Find circular dependencies, stale blockers, empty epics and orphan issues, then clean up your Jira project in one click.">
+<link rel="canonical" href="https://linkhealthcheck.com/">
+<meta property="og:title" content="Link Healthcheck – Jira project health check">
+<meta property="og:description" content="Find circular dependencies, stale blockers, empty epics and orphan issues in Jira, then clean up in one click. Free for teams up to 10 users.">
+<meta property="og:url" content="https://linkhealthcheck.com/">
+<meta property="og:image" content="https://linkhealthcheck.com/img/overview.png">
+<link rel="icon" href="img/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="fonts.css">
+<style>
+/* Layout: product page — dark indigo hero with the real overview, then light sections that each show one real screen */
+:root{
+  --ink:#16173a; --indigo:#2f2f8f; --teal:#14b8a6; --bg:#ffffff; --soft:#f4f5fb; --line:#e3e5ef; --fg:#1b1d2e; --muted:#5e6280;
+  --on-dark:#eef0ff; --on-dark-muted:#b9bce6; --crit:#c2412d;
+  --display:"Manrope",ui-sans-serif,system-ui,sans-serif; --body:"Inter",ui-sans-serif,system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1024;--soft:#16183a;--line:#2a2d55;--fg:#e9eaf8;--muted:#a3a7cf;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1024;--soft:#16183a;--line:#2a2d55;--fg:#e9eaf8;--muted:#a3a7cf;color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.6}
+.in{max-width:1100px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.015em}
+a{color:inherit}
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:15px;text-decoration:none;border-radius:10px;padding:12px 20px}
+.btn.primary{background:var(--teal);color:#06231f}
+.btn.ghost{border:1px solid rgba(255,255,255,.28);color:var(--on-dark)}
+.btn:focus-visible{outline:2px solid var(--teal);outline-offset:3px}
+/* hero */
+.hero{background:linear-gradient(160deg,var(--ink) 0%,var(--indigo) 70%,#1d6f78 130%);color:var(--on-dark)}
+.hero .in{padding-block:22px 0}
+nav{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:18px;text-decoration:none}
+.brand img{width:32px;height:32px;border-radius:8px}
+.brand small{font-family:var(--body);font-weight:500;font-size:12px;color:var(--on-dark-muted);display:block;line-height:1}
+nav .links{display:flex;gap:20px;font-size:14px;color:var(--on-dark-muted)}
+nav .links a{text-decoration:none}
+.hero-copy{padding-block:72px 40px;max-width:760px}
+.eyebrow{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--teal)}
+.hero h1{font-size:clamp(34px,5.4vw,58px);font-weight:800;line-height:1.05;margin-top:14px}
+.hero p.lead{font-size:clamp(17px,2vw,20px);color:var(--on-dark-muted);margin:20px 0 28px;max-width:620px}
+.cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.cta .note{font-size:14px;color:var(--on-dark-muted)}
+.shot{background:#fff;border-radius:14px 14px 0 0;padding:14px 14px 0;box-shadow:0 -10px 60px rgba(0,0,0,.35);overflow:hidden}
+.shot img{display:block;width:100%;height:auto}
+.shot-cap{font-size:12px;color:var(--on-dark-muted);padding:10px 2px 0}
+/* sections */
+section{padding-block:84px}
+section.alt{background:var(--soft)}
+.kicker{font-size:13px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+h2{font-size:clamp(26px,3.4vw,38px);font-weight:800;margin-top:10px}
+.sub{color:var(--muted);max-width:640px;margin:14px 0 0}
+.detect{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:40px}
+.detect div{border-top:2px solid var(--fg);padding-top:14px}
+.detect h3{font-size:17px}
+.detect p{margin:6px 0 0;font-size:14px;color:var(--muted)}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:48px;align-items:center}
+.frame{border:1px solid var(--line);border-radius:12px;background:#fff;padding:10px;overflow:hidden}
+.frame img{display:block;width:100%;height:auto;border-radius:6px}
+.figure-cap{font-size:13px;color:var(--muted);margin-top:10px}
+ol.steps{list-style:none;margin:40px 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;counter-reset:s}
+ol.steps li{counter-increment:s;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:18px}
+ol.steps li::before{content:counter(s);font-family:var(--display);font-weight:800;font-size:28px;color:var(--teal);display:block;line-height:1;margin-bottom:10px}
+ol.steps b{font-family:var(--display);font-size:16px;display:block}
+ol.steps span{font-size:14px;color:var(--muted)}
+.numbers{display:flex;flex-wrap:wrap;gap:40px;margin-top:28px}
+.numbers div b{display:block;font-family:var(--display);font-weight:800;font-size:38px;line-height:1.1;font-variant-numeric:tabular-nums}
+.numbers div b em{font-style:normal;font-size:16px;color:var(--crit);margin-left:6px}
+.numbers div span{font-size:14px;color:var(--muted)}
+.trust{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:36px}
+.trust div{border:1px solid var(--line);border-radius:12px;padding:20px}
+.trust h3{font-size:17px}
+.trust p{margin:8px 0 0;font-size:14px;color:var(--muted)}
+.trust a{color:var(--fg);font-weight:600}
+dl.faq{margin:32px 0 0;display:grid;gap:4px;max-width:760px}
+dl.faq dt{font-family:var(--display);font-weight:700;font-size:17px;margin-top:18px}
+dl.faq dd{margin:6px 0 0;color:var(--muted)}
+.final{background:linear-gradient(160deg,var(--ink),var(--indigo));color:var(--on-dark);text-align:left}
+.final h2{color:var(--on-dark)}
+.final p{color:var(--on-dark-muted);max-width:560px}
+footer{padding-block:28px;font-size:13px;color:var(--muted);border-top:1px solid var(--line)}
+footer .in{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+footer a{color:var(--muted)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:40px;align-items:center}
+.scorecard{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.16);border-radius:16px;padding:26px 26px 22px}
+.scorecard .lbl{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--on-dark-muted);font-weight:600}
+.scorecard .big{font-family:var(--display);font-weight:800;font-size:76px;line-height:1;margin-top:10px;font-variant-numeric:tabular-nums}
+.scorecard .big small{font-size:26px;color:var(--on-dark-muted);font-weight:700}
+.scorecard .risk{display:inline-block;margin-top:10px;font-weight:700;color:#ffb3a6;background:rgba(194,65,45,.22);border-radius:999px;padding:3px 12px;font-size:14px}
+.bar{height:8px;border-radius:99px;background:rgba(255,255,255,.14);margin:18px 0 14px;overflow:hidden}
+.bar i{display:block;height:100%;width:69%;background:linear-gradient(90deg,var(--teal),#7dd3c8)}
+.scorecard ul{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:14px;color:var(--on-dark-muted)}
+.scorecard ul b{color:var(--on-dark)}
+.scorecard .demo{font-size:12px;color:var(--on-dark-muted);margin-top:14px;border-top:1px solid rgba(255,255,255,.12);padding-top:10px}
+.why{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:36px}
+.why div{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:22px}
+.why h3{font-size:19px}
+.why p{margin:8px 0 0;color:var(--muted);font-size:15px}
+.video{display:flex;flex-wrap:wrap;align-items:center;gap:24px;justify-content:space-between;background:linear-gradient(160deg,var(--ink),var(--indigo));color:var(--on-dark);border-radius:16px;padding:28px 30px;margin-top:40px}
+.video h3{font-size:22px;color:var(--on-dark)}
+.video p{margin:6px 0 0;color:var(--on-dark-muted);font-size:15px;max-width:520px}
+.play{display:inline-flex;align-items:center;gap:10px}
+.play::before{content:"";width:0;height:0;border-left:12px solid currentColor;border-top:8px solid transparent;border-bottom:8px solid transparent}
+.inline-cta{margin-top:26px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.btn.solid{background:var(--indigo);color:#fff}
+.perm{margin:10px 0 0;padding-left:18px;font-size:14px;color:var(--muted)}
+.perm code{font-size:12.5px;background:var(--soft);border:1px solid var(--line);border-radius:5px;padding:1px 5px;color:var(--fg)}
+@media (max-width:900px){.hero-grid{grid-template-columns:1fr}.why{grid-template-columns:1fr}}
+@media (max-width:900px){.detect,ol.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.split{grid-template-columns:1fr;gap:28px}.trust{grid-template-columns:1fr}nav .links{display:none}}
+@media (max-width:520px){.detect,ol.steps{grid-template-columns:1fr}section{padding-block:60px}.hero-copy{padding-block:48px 32px}}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="in">
+    <nav>
+      <a class="brand" href="#top"><img src="img/logo.svg" alt=""><span>Link Healthcheck<small>by GC Consulting</small></span></a>
+      <div class="links"><a href="#detect">What it finds</a><a href="#how">How it works</a><a href="#trust">Security</a><a href="#faq">FAQ</a></div>
+    </nav>
+    <div class="hero-grid">
+    <div class="hero-copy" id="top">
+      <div class="eyebrow">Jira project health check</div>
+      <h1>Is your Jira project really healthy?</h1>
+      <p class="lead">Find hidden issues. Improve your project health. Clean up Jira.<br>Link Healthcheck finds circular dependencies, stale blockers, empty epics and orphan issues, scores your project from 0 to 100, and fixes the common problems in one click.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://marketplace.atlassian.com/apps/2175195773/link-healthcheck">Install free on Atlassian Marketplace</a>
+        <a class="btn ghost" href="#demo">Watch the demo</a>
+      </div>
+      <p class="note" style="margin:14px 0 0;font-size:14px;color:var(--on-dark-muted)">Free for teams up to 10 users · Jira Cloud</p>
+    </div>
+    <aside class="scorecard" aria-label="Example health score">
+      <div class="lbl">Your Jira project health</div>
+      <div class="big">69<small>/100</small></div>
+      <span class="risk">At risk</span>
+      <div class="bar"><i></i></div>
+      <ul><li><b>2 critical</b> dependency loops block 7 issues</li><li><b>75</b> findings across 232 open issues</li><li><b>10</b> of them fixable in one click</li></ul>
+      <div class="demo">Real scan of our demo project (390 issues, 232 open).</div>
+    </aside>
+    </div>
+    <div class="shot">
+      <img src="img/overview.png" alt="Link Healthcheck overview: health score 69 At risk, 75 open findings including 2 critical, 232 open issues analysed">
+    </div>
+  </div>
+</header>
+
+<section class="alt" id="why">
+  <div class="in">
+    <div class="kicker">Why Link Healthcheck</div>
+    <h2>Stop hunting for broken links by hand</h2>
+    <div class="why">
+      <div><h3>Save time</h3><p>One scan replaces hours of searching through issue links, epics and boards.</p></div>
+      <div><h3>Trust your data</h3><p>Reports and boards are only as reliable as the links behind them. See what is wrong before it skews your numbers.</p></div>
+      <div><h3>Stay in control</h3><p>Nothing changes until you click. You review every proposed fix before it is applied.</p></div>
+    </div>
+    <div class="video" id="demo">
+      <div><h3>See it in action</h3><p>A real Jira project, scanned and cleaned up in under a minute.</p></div>
+      <a class="btn primary play" href="https://youtu.be/Sg4luxjHlpg">Watch the demo video</a>
+    </div>
+  </div>
+</section>
+
+<section id="detect">
+  <div class="in">
+    <div class="kicker">Find</div>
+    <h2>The problems a board never shows you</h2>
+    <p class="sub">Your board can look clean while the links underneath are broken. Link Healthcheck reads your project (up to its 2,000 most recently updated issues per scan), runs 8 checks and lists what is wrong, sorted by severity.</p>
+    <div class="detect">
+      <div><h3>Circular dependencies</h3><p>Issues that block each other in a loop, so none of them can start.</p></div>
+      <div><h3>Stale blockers</h3><p>Issues blocked by work nobody has touched for a long time, or still "blocked by" issues already Done.</p></div>
+      <div><h3>Empty or finished epics</h3><p>Epics with no child issues, or epics still open when every child is Done.</p></div>
+      <div><h3>Orphan issues</h3><p>Bugs linked to nothing, and open issues under a parent that is already closed.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="in split">
+    <div>
+      <div class="kicker">One report</div>
+      <h2>Every finding, with its severity and impact</h2>
+      <p class="sub">Each line names the issue, explains the problem in plain words and shows how many points fixing it adds to your score. Open it in Jira or ignore it.</p>
+    </div>
+    <figure style="margin:0"><div class="frame"><img src="img/findings.png" alt="Findings list: two circular dependencies marked Critical, empty epics marked Warning"></div><figcaption class="figure-cap">Real scan of our demo project: 390 issues, 232 of them open.</figcaption></figure>
+  </div>
+</section>
+
+<section>
+  <div class="in split">
+    <figure style="margin:0"><div class="frame"><img src="img/fix.png" alt="10 problems can be fixed in one click: close finished epics and remove stale blocker links"></div><figcaption class="figure-cap">You see every change before it is made.</figcaption></figure>
+    <div>
+      <div class="kicker">Fix</div>
+      <h2>Clean up your Jira backlog in one click</h2>
+      <p class="sub">Two kinds of problems can be fixed in one click: obsolete "blocks" links to issues already Done, and epics whose child issues are all Done. Fix them one by one or up to 20 at once. Every change is listed for you to confirm, and it is made with your own Jira account. For everything else, open the issue in Jira and fix it your way.</p>
+      <div class="inline-cta"><a class="btn solid" href="https://marketplace.atlassian.com/apps/2175195773/link-healthcheck">Install free on Atlassian Marketplace</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="how">
+  <div class="in">
+    <div class="kicker">Improve</div>
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li><b>Install</b><span>Add Link Healthcheck to Jira Cloud from the Atlassian Marketplace.</span></li>
+      <li><b>Run the health check</b><span>Open it from your project. The scan takes seconds.</span></li>
+      <li><b>Review the findings</b><span>Start with the critical ones. The score shows what to fix first.</span></li>
+      <li><b>Clean up</b><span>Fix eligible problems in one click, or open the issue in Jira and fix it your way.</span></li>
+    </ol>
+    <div class="numbers" aria-label="Results on a demo project">
+      <div><b>69<em>At risk</em></b><span>health score of our demo project (390 issues, 232 open)</span></div>
+      <div><b>75</b><span>findings, 2 of them critical</span></div>
+      <div><b>10</b><span>problems fixable in one click</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="trust">
+  <div class="in">
+    <div class="kicker">Trust</div>
+    <h2>Built on Atlassian Forge, for Jira Cloud</h2>
+    <div class="trust">
+      <div><h3>Your data stays in Atlassian</h3><p>The app runs on Atlassian's own platform. It only keeps your settings, ignored findings and score history. Read the <a href="https://energetic-marlin-708.notion.site/Link-Healthcheck-Privacy-Policy-4048e6b0ff0d802eb065d5481fcc87b6">privacy policy</a>.</p></div>
+      <div><h3>Nothing changes without you</h3><p>The scan only reads. A fix happens only when you click it, after you have seen exactly what will change. Settings and "Ignore" are reserved for project administrators.</p>
+        <p style="margin-top:12px"><b style="color:var(--fg)">Permissions requested</b></p>
+        <ul class="perm"><li><code>read:jira-work</code> to scan issues and links</li><li><code>write:jira-work</code> only for the fixes you confirm</li><li><code>storage:app</code> for settings, ignored findings and score history</li></ul></div>
+      <div><h3>Documentation and support</h3><p>Read the <a href="https://energetic-marlin-708.notion.site/Link-Healthcheck-Documentation-4048e6b0ff0d8026a5d1ea9552dfeb42">documentation</a> or <a href="https://energetic-marlin-708.notion.site/Link-Healthcheck-Support-4048e6b0ff0d80f88adcc6b110aca84a">contact support</a>, Monday to Friday, 9:00–17:00 CET.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="faq">
+  <div class="in">
+    <div class="kicker">FAQ</div>
+    <h2>Questions</h2>
+    <dl class="faq">
+      <dt>How much does it cost?</dt><dd>It is free for teams up to 10 users. Larger teams pay per user through the Atlassian Marketplace, with a free trial.</dd>
+      <dt>Which Jira does it work with?</dt><dd>Jira Cloud only. It is not available for Jira Data Center or Server.</dd>
+      <dt>How is the score calculated?</dt><dd>The score starts at 100 and goes down with each open finding, weighted by its severity and the size of the project. Each finding shows how many points fixing it adds back.</dd>
+      <dt>Which problems can be fixed in one click?</dt><dd>Obsolete "blocks" links to issues that are already Done, and epics whose child issues are all Done. Every other finding opens the issue in Jira so you can decide.</dd>
+      <dt>How large a project can it scan?</dt><dd>Each scan reads up to the 2,000 most recently updated issues of the project.</dd>
+      <dt>Will it change my issues?</dt><dd>Only when you click a fix. Removing a link leaves both issues unchanged. Closing an epic moves it to Done, and only when all its child issues are already Done.</dd>
+      <dt>Who builds it?</dt><dd>GC Consulting, an Atlassian Marketplace partner based in Munich, Germany.</dd>
+    </dl>
+  </div>
+</section>
+
+<section class="final">
+  <div class="in">
+    <h2>Find. Fix. Improve.</h2>
+    <p>Give your Jira project a health check today. It is free for teams up to 10 users.</p>
+    <div class="cta" style="margin-top:24px"><a class="btn primary" href="https://marketplace.atlassian.com/apps/2175195773/link-healthcheck">Install Link Healthcheck</a></div>
+  </div>
+</section>
+
+<footer>
+  <div class="in">
+    <span>© 2026 GC Consulting · Munich, Germany · <a href="impressum.html">Impressum</a> · <a href="privacy.html">Datenschutz / Privacy</a></span>
+    <span><a href="https://energetic-marlin-708.notion.site/Link-Healthcheck-Privacy-Policy-4048e6b0ff0d802eb065d5481fcc87b6">Privacy</a> · <a href="https://energetic-marlin-708.notion.site/Link-Healthcheck-End-User-License-Agreement-4048e6b0ff0d8063a766cf9bb703ebbd">EULA</a> · <a href="https://energetic-marlin-708.notion.site/Link-Healthcheck-Support-4048e6b0ff0d80f88adcc6b110aca84a">Support</a> · Jira and Atlassian are trademarks of Atlassian.</span>
+  </div>
+</footer>
+</body>
+</html>
