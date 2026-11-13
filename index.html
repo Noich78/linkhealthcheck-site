@@ -112,6 +112,19 @@ footer a{color:var(--muted)}
 @media (max-width:900px){.hero-grid{grid-template-columns:1fr}.why{grid-template-columns:1fr}}
 @media (max-width:900px){.detect,ol.steps{grid-template-columns:repeat(2,minmax(0,1fr))}.split{grid-template-columns:1fr;gap:28px}.trust{grid-template-columns:1fr}nav .links{display:none}}
 @media (max-width:520px){.detect,ol.steps{grid-template-columns:1fr}section{padding-block:60px}.hero-copy{padding-block:48px 32px}}
+.pillars{list-style:none;margin:-8px 0 26px;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;font-weight:600;font-size:15px;color:var(--on-dark)}
+.pillars li::before{content:"✓";color:#7dd3c8;margin-right:7px}
+.trustline{margin:6px 0 0;font-size:13px;color:var(--on-dark-muted);letter-spacing:.01em}
+.player{margin-top:40px;background:linear-gradient(160deg,var(--ink),var(--indigo));border-radius:16px;padding:28px 30px 20px;color:var(--on-dark)}
+.player-head h3{font-size:22px;color:var(--on-dark)}
+.player-head p{margin:6px 0 18px;color:var(--on-dark-muted);font-size:15px;max-width:640px}
+.poster{position:relative;display:block;width:100%;padding:0;border:0;border-radius:10px;overflow:hidden;cursor:pointer;background:#000;aspect-ratio:16/9}
+.poster img{width:100%;height:100%;object-fit:cover;display:block}
+.playbtn{position:absolute;left:50%;top:80%;width:78px;height:78px;margin:-39px 0 0 -39px;border-radius:50%;background:var(--teal);box-shadow:0 8px 30px rgba(0,0,0,.35)}
+.playbtn::after{content:"";position:absolute;left:31px;top:24px;border-left:24px solid #fff;border-top:15px solid transparent;border-bottom:15px solid transparent}
+.poster:hover .playbtn{transform:scale(1.06)}
+.player iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:10px;display:block}
+.yt-note{margin:10px 0 0;font-size:12px;color:var(--on-dark-muted)}
 </style>
 </head>
 <body>
@@ -125,19 +138,21 @@ footer a{color:var(--muted)}
     <div class="hero-copy" id="top">
       <div class="eyebrow">Jira project health check</div>
       <h1>Is your Jira project really healthy?</h1>
-      <p class="lead">Find hidden issues. Improve your project health. Clean up Jira.<br>Link Healthcheck finds circular dependencies, stale blockers, empty epics and orphan issues, scores your project from 0 to 100, and fixes the common problems in one click.</p>
+      <p class="lead">Discover hidden dependencies, blocked issues and forgotten work. Link Healthcheck scans your Jira project, finds structural problems and helps you fix them before they slow your team down.</p>
+      <ul class="pillars"><li>Find hidden issues</li><li>Improve project health</li><li>Fix with confidence</li></ul>
       <div class="cta">
         <a class="btn primary" href="https://marketplace.atlassian.com/apps/2175195773/link-healthcheck">Install free on Atlassian Marketplace</a>
         <a class="btn ghost" href="#demo">Watch the demo</a>
       </div>
-      <p class="note" style="margin:14px 0 0;font-size:14px;color:var(--on-dark-muted)">Free for teams up to 10 users · Jira Cloud</p>
+      <p class="note" style="margin:14px 0 0;font-size:14px;color:var(--on-dark-muted)"><b style="color:var(--on-dark)">Free for teams up to 10 users</b> · Jira Cloud</p>
+      <p class="trustline">Built on Atlassian Forge · No external account · Your data stays in Atlassian</p>
     </div>
     <aside class="scorecard" aria-label="Example health score">
       <div class="lbl">Your Jira project health</div>
       <div class="big">69<small>/100</small></div>
       <span class="risk">At risk</span>
       <div class="bar"><i></i></div>
-      <ul><li><b>2 critical</b> dependency loops block 7 issues</li><li><b>75</b> findings across 232 open issues</li><li><b>10</b> of them fixable in one click</li></ul>
+      <ul><li><b>2 critical loops</b> · 7 issues blocked</li><li><b>75 findings</b> · 232 issues analysed</li><li><b>10 quick fixes</b> available</li></ul>
       <div class="demo">Real scan of our demo project (390 issues, 232 open).</div>
     </aside>
     </div>
@@ -150,15 +165,19 @@ footer a{color:var(--muted)}
 <section class="alt" id="why">
   <div class="in">
     <div class="kicker">Why Link Healthcheck</div>
-    <h2>Stop hunting for broken links by hand</h2>
+    <h2>Stop hunting for broken Jira links by hand</h2>
     <div class="why">
       <div><h3>Save time</h3><p>One scan replaces hours of searching through issue links, epics and boards.</p></div>
       <div><h3>Trust your data</h3><p>Reports and boards are only as reliable as the links behind them. See what is wrong before it skews your numbers.</p></div>
       <div><h3>Stay in control</h3><p>Nothing changes until you click. You review every proposed fix before it is applied.</p></div>
     </div>
-    <div class="video" id="demo">
-      <div><h3>See it in action</h3><p>A real Jira project, scanned and cleaned up in under a minute.</p></div>
-      <a class="btn primary play" href="https://youtu.be/Sg4luxjHlpg">Watch the demo video</a>
+    <div class="player" id="demo">
+      <div class="player-head"><h3>See it in action</h3><p>A real Jira project: scan, health score, dependency loops, empty epics, then a fix with confirmation.</p></div>
+      <button class="poster" type="button" aria-label="Play the demo video" data-yt="Sg4luxjHlpg">
+        <img src="img/video-poster.jpg" alt="Demo video: 75 problems. Hiding in plain sight.">
+        <span class="playbtn"></span>
+      </button>
+      <p class="yt-note">The video is hosted on YouTube. It loads only when you click play (privacy-enhanced mode).</p>
     </div>
   </div>
 </section>
@@ -262,5 +281,9 @@ footer a{color:var(--muted)}
     <span><a href="https://energetic-marlin-708.notion.site/Link-Healthcheck-Privacy-Policy-4048e6b0ff0d802eb065d5481fcc87b6">Privacy</a> · <a href="https://energetic-marlin-708.notion.site/Link-Healthcheck-End-User-License-Agreement-4048e6b0ff0d8063a766cf9bb703ebbd">EULA</a> · <a href="https://energetic-marlin-708.notion.site/Link-Healthcheck-Support-4048e6b0ff0d80f88adcc6b110aca84a">Support</a> · Jira and Atlassian are trademarks of Atlassian.</span>
   </div>
 </footer>
+<script>
+document.querySelectorAll('.poster').forEach(function(b){b.addEventListener('click',function(){var f=document.createElement('iframe');f.src='https://www.youtube-nocookie.com/embed/'+b.dataset.yt+'?autoplay=1&rel=0';f.title='Link Healthcheck demo video';f.allow='autoplay; encrypted-media; picture-in-picture';f.allowFullscreen=true;b.replaceWith(f);});});
+</script>
+
 </body>
 </html>
