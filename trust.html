@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Trust Center – Link Healthcheck</title>
+<meta name="description" content="Security, privacy and data handling of Link Healthcheck for Jira: Runs on Atlassian, no external servers, no personal data stored.">
+<link rel="icon" href="img/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="fonts.css">
+<style>
+:root{--bg:#fff;--fg:#1b1d2e;--muted:#5e6280;--line:#e3e5ef;--indigo:#2f2f8f;--card:#f7f7fc;--teal:#0f9488}
+@media (prefers-color-scheme:dark){:root{--bg:#0f1024;--fg:#e9eaf8;--muted:#a3a7cf;--line:#2a2d55;--indigo:#9ea2ff;--card:#171936;--teal:#5eead4;color-scheme:dark}}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Inter",system-ui,sans-serif;line-height:1.65;font-size:16px}
+main{max-width:820px;margin:0 auto;padding:48px 20px 64px}
+h1,h2{font-family:"Manrope",system-ui,sans-serif;letter-spacing:-.01em}
+h1{font-size:34px;margin:24px 0 6px}
+h2{font-size:20px;margin:40px 0 10px}
+.lead{font-size:18px;color:var(--muted);margin:0 0 24px}
+.muted{color:var(--muted);font-size:14px}
+a{color:var(--indigo)}
+.back{font-weight:600;text-decoration:none}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:24px 0}
+.fact{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.fact b{display:block;font-size:15px;margin-bottom:2px}
+.fact span{color:var(--muted);font-size:14px}
+.fact b::before{content:"✓ ";color:var(--teal)}
+table{width:100%;border-collapse:collapse;font-size:15px}
+th,td{text-align:left;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{width:34%;font-weight:600}
+code{font-size:14px;background:var(--card);padding:1px 6px;border-radius:6px}
+</style>
+</head>
+<body>
+<main>
+<a class="back" href="./">← Link Healthcheck</a>
+<h1>Trust Center</h1>
+<p class="lead">How Link Healthcheck for Jira handles your data, security and privacy.</p>
+
+<div class="facts">
+  <div class="fact"><b>Runs on Atlassian</b><span>Built on Atlassian Forge. No servers of our own.</span></div>
+  <div class="fact"><b>No data leaves Atlassian</b><span>No external calls, no analytics, no tracking.</span></div>
+  <div class="fact"><b>No personal data stored</b><span>No user fields are read: no assignee, reporter, name or e-mail.</span></div>
+  <div class="fact"><b>You stay in control</b><span>Changes only after your confirmation, made with your own Jira account.</span></div>
+</div>
+
+<h2>Data handling</h2>
+<table>
+<tr><th>Hosting</th><td>100% Atlassian Forge infrastructure. The app qualifies for the “Runs on Atlassian” trust signal.</td></tr>
+<tr><th>Jira data read</th><td>For the project you open: key, summary, type, status, created and updated dates, parent and issue links. Processed in memory during the scan, not stored.</td></tr>
+<tr><th>Data stored</th><td>In Forge storage, per project: app settings, the findings you chose to ignore (check name and issue key) and a 30-day score history (date, score, number of problems).</td></tr>
+<tr><th>Changes in Jira</th><td>Only after a click and an explicit confirmation: removing an obsolete “blocks” link or moving a finished epic to Done. Each change runs as the current user and appears in the issue history.</td></tr>
+<tr><th>Permissions (scopes)</th><td><code>read:jira-work</code>, <code>write:jira-work</code>, <code>storage:app</code>. Nothing else.</td></tr>
+<tr><th>Third parties</th><td>None. No sub-processors other than Atlassian, which hosts Forge. Nothing is sold or shared.</td></tr>
+<tr><th>Data residency</th><td>Data stays in your site's Forge storage, managed by Atlassian.</td></tr>
+<tr><th>Retention and deletion</th><td>Kept while the app is installed. Deleted by Atlassian under Forge rules when the app is uninstalled. Admins can clear ignored findings at any time in Settings.</td></tr>
+</table>
+
+<h2>Security</h2>
+<table>
+<tr><th>Authentication</th><td>Handled by Atlassian (Forge). The app stores no passwords, tokens or secrets.</td></tr>
+<tr><th>Authorization</th><td>Admin-only actions are re-checked on the server with Jira's permission API. Write actions are limited to the open project.</td></tr>
+<tr><th>Encryption</th><td>Provided by Atlassian: Forge storage is encrypted at rest and all traffic uses HTTPS.</td></tr>
+<tr><th>Logs</th><td>Technical error messages only, with no personal data.</td></tr>
+<tr><th>Testing</th><td>Automated unit and QA tests must pass before every production release, plus dependency scanning (<code>npm audit</code>) and manual tests on a separate test site.</td></tr>
+<tr><th>Dependencies</th><td>Official Atlassian Forge packages and React only, kept up to date.</td></tr>
+<tr><th>Service status</th><td>The app runs entirely on Atlassian Forge, so its availability follows Atlassian Cloud. Live status: <a href="https://status.atlassian.com">status.atlassian.com</a>.</td></tr>
+<tr><th>Incident response</th><td>We follow Atlassian's Marketplace security incident process and notify Atlassian and affected customers.</td></tr>
+</table>
+
+<h2>Documents</h2>
+<ul>
+<li><a href="https://energetic-marlin-708.notion.site/Link-Healthcheck-Privacy-Policy-4048e6b0ff0d802eb065d5481fcc87b6">Privacy Policy</a></li>
+<li><a href="https://energetic-marlin-708.notion.site/Link-Healthcheck-End-User-License-Agreement-4048e6b0ff0d8063a766cf9bb703ebbd">End User License Agreement</a></li>
+<li><a href="https://energetic-marlin-708.notion.site/Link-Healthcheck-Documentation-4048e6b0ff0d8026a5d1ea9552dfeb42">Documentation</a></li>
+<li><a href="https://marketplace.atlassian.com/apps/2175195773/link-healthcheck?tab=privacy-and-security">Privacy &amp; Security tab on the Atlassian Marketplace</a></li>
+</ul>
+
+<h2>Security contact</h2>
+<p>To report a vulnerability or ask a security question: <a href="mailto:support@linkhealthcheck.com">support@linkhealthcheck.com</a>.</p>
+
+<p class="muted">Last updated: November 2026 · GC Consulting, Munich, Germany · <a href="impressum.html">Impressum</a> · <a href="privacy.html">Datenschutz</a><br>Jira and Atlassian are trademarks of Atlassian. Link Healthcheck is not affiliated with or endorsed by Atlassian.</p>
+</main>
+</body>
+</html>
